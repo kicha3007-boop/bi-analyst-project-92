@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Продажи: анализ продавцов и покупателей</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --ink: #1f2933;
+    --muted: #52606d;
+    --accent: #1a85a0;
+    --accent-soft: #e3f3f7;
+    --line: #d9e2ec;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #fff; color: var(--ink);
+    font-family: "Inter", "Segoe UI", "DejaVu Sans", Arial, sans-serif; }
+  .slide { width: 1280px; height: 720px; padding: 44px 56px 36px;
+    position: relative; overflow: hidden; page-break-after: always;
+    display: flex; flex-direction: column; }
+  .slide:last-child { page-break-after: auto; }
+  h1 { font-size: 46px; margin: 0 0 18px; line-height: 1.15; }
+  h2 { font-size: 30px; margin: 0 0 18px; color: var(--ink); }
+  h2 small { display: block; font-size: 17px; font-weight: 400;
+    color: var(--muted); margin-top: 6px; }
+  p, li { font-size: 19px; line-height: 1.45; }
+  ul { margin: 0; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+  b { color: var(--accent); }
+  .footer { position: absolute; bottom: 14px; left: 56px; right: 56px;
+    font-size: 12px; color: var(--muted); display: flex;
+    justify-content: space-between; border-top: 1px solid var(--line);
+    padding-top: 8px; }
+  .row { display: flex; gap: 32px; flex: 1; min-height: 0; }
+  .chart { flex: 1.45; display: flex; align-items: flex-start;
+    justify-content: center; min-height: 0; }
+  .chart img { max-width: 100%; max-height: 540px; object-fit: contain;
+    border: 1px solid var(--line); border-radius: 8px; }
+  .notes { flex: 1; background: var(--accent-soft); border-radius: 10px;
+    padding: 20px 22px; }
+  .notes h3 { margin: 0 0 10px; font-size: 18px; text-transform: uppercase;
+    letter-spacing: .04em; color: var(--accent); }
+  .notes li, .notes p { font-size: 17px; }
+  .title { justify-content: center; background:
+    linear-gradient(135deg, #0f4c5c 0%, #1a85a0 100%); color: #fff; }
+  .title h1 { font-size: 56px; color: #fff; }
+  .title p { font-size: 22px; color: #e3f3f7; margin: 4px 0; }
+  .title b { color: #fff; }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    margin-bottom: 22px; }
+  .kpi { border: 1px solid var(--line); border-radius: 10px;
+    padding: 16px 20px; }
+  .kpi .value { font-size: 38px; font-weight: 700; color: var(--accent); }
+  .kpi .label { font-size: 16px; color: var(--muted); }
+  .link { font-family: Consolas, "DejaVu Sans Mono", monospace;
+    font-size: 17px; background: #f0f4f8; padding: 2px 6px;
+    border-radius: 4px; color: var(--ink); }
+  .wide img { max-height: 520px; }
+</style>
+</head>
+<body>
+
+<section class="slide title">
+  <h1>Продажи торговой площадки</h1>
+  <p>Анализ работы продавцов и поведения покупателей</p>
+  <p>Период данных: <b>21.09.1992 – 29.12.1992</b>, 100 000 сделок</p>
+  <p style="margin-top:40px">Kichigin Sergey · BI-аналитик</p>
+</section>
+
+<section class="slide">
+  <h2>Ключевые показатели
+    <small>Основная база торговой площадки: таблицы sales, products, employees, customers</small>
+  </h2>
+  <div class="kpis">
+    <div class="kpi"><div class="value">26,7 млрд</div>
+      <div class="label">выручка за весь период (сумма цена × количество)</div></div>
+    <div class="kpi"><div class="value">100 000</div>
+      <div class="label">сделок, средняя выручка за сделку — 267&nbsp;165</div></div>
+    <div class="kpi"><div class="value">22</div>
+      <div class="label">продавца провели все сделки</div></div>
+    <div class="kpi"><div class="value">19 759</div>
+      <div class="label">покупателей в базе (customers_count)</div></div>
+    <div class="kpi"><div class="value">230</div>
+      <div class="label">из них совершили хотя бы одну покупку (1,2%)</div></div>
+    <div class="kpi"><div class="value">15</div>
+      <div class="label">покупателей начали с акционного товара</div></div>
+  </div>
+  <p>Дашборд со всеми графиками: <span class="link">http://localhost:8088/superset/dashboard/sales/</span>
+    — локальный Superset проекта (запуск: <span class="link">make up dashboard</span>,
+    выгрузка дашборда — <span class="link">superset/export/dashboard.zip</span> в репозитории
+    <span class="link">github.com/kicha3007-boop/bi-analyst-project-92</span>).</p>
+  <div class="footer"><span>Продажи · ключевые показатели</span><span>2</span></div>
+</section>
+
+<section class="slide">
+  <h2>Топ-10 продавцов по выручке
+    <small>Отчёт top_10_total_income: суммарная выручка продавца за всё время, млн</small>
+  </h2>
+  <div class="row">
+    <div class="chart"><img src="img/top_10_total_income.png" alt="Топ-10 продавцов по выручке"></div>
+    <div class="notes">
+      <h3>Что видно</h3>
+      <ul>
+        <li>Лидер — <b>Dirk Stringer</b>: 4 925 млн, это <b>18,4%</b> всей выручки площадки.</li>
+        <li>Первая тройка (Dirk Stringer, Michel DeFrance, Albert Ringer) даёт <b>40,7%</b> выручки,
+          первая десятка — <b>76,5%</b>.</li>
+        <li>Отрыв лидера от второго места — 1 665 млн (в 1,5 раза).</li>
+        <li>Вывод: выручка сильно сосредоточена у нескольких продавцов; квартальный бонус
+          стоит считать по выручке, а не по числу проданных штук.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>Продажи · продавцы</span><span>3</span></div>
+</section>
+
+<section class="slide">
+  <h2>Больше сделок — не значит больше выручки
+    <small>Отчёт top_10_total_income: количество сделок у той же десятки</small>
+  </h2>
+  <div class="row">
+    <div class="chart"><img src="img/top_10_operations.png" alt="Количество сделок у топ-10"></div>
+    <div class="notes">
+      <h3>Что видно</h3>
+      <ul>
+        <li><b>Abraham Bennet</b> провёл больше всех сделок — 9 460, но по выручке он только шестой
+          (1 618 млн).</li>
+        <li>У лидера по выручке Dirk Stringer сделок в 2,3 раза меньше (4 192), зато средняя сделка
+          ≈ 1,17 млн против ≈ 0,17 млн у Abraham Bennet.</li>
+        <li>Michael O'Leary — второй по числу сделок среди этой десятки (5 757), но замыкает её по выручке
+          (928 млн).</li>
+        <li>Вывод: число сделок плохо отражает вклад продавца — нужно смотреть на сумму.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>Продажи · продавцы</span><span>4</span></div>
+</section>
+
+<section class="slide">
+  <h2>Продавцы со средней сделкой ниже средней по площадке
+    <small>Отчёт lowest_average_income: средняя выручка за сделку, средняя по всем сделкам — 267 165</small>
+  </h2>
+  <div class="row">
+    <div class="chart"><img src="img/lowest_average_income.png" alt="Средняя выручка за сделку"></div>
+    <div class="notes">
+      <h3>Что видно</h3>
+      <ul>
+        <li>Ниже среднего — <b>15 из 22</b> продавцов: высокий средний чек держат всего 7 человек.</li>
+        <li>Самая маленькая средняя сделка у <b>Stearns MacFeather</b> — 46 407, в 5,8 раза ниже
+          средней по площадке; следом Ann Dull (55 090) и Morningstar Greene (88 124).</li>
+        <li>В этот список попали и трое из топ-10 по выручке: Abraham Bennet, Michael O'Leary,
+          Sheryl Hunter — они берут объёмом сделок.</li>
+        <li>Вывод: продавцам с низким чеком стоит предложить обучение допродажам и работу
+          с более дорогим ассортиментом.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>Продажи · продавцы</span><span>5</span></div>
+</section>
+
+<section class="slide">
+  <h2>Выручка по дням недели
+    <small>Отчёт day_of_the_week_income: сумма выручки всех продавцов по дню недели, млн</small>
+  </h2>
+  <div class="row">
+    <div class="chart"><img src="img/income_by_weekday.png" alt="Выручка по дням недели"></div>
+    <div class="notes">
+      <h3>Что видно</h3>
+      <ul>
+        <li>Самые доходные дни — <b>вторник</b> (3 993 млн) и понедельник (3 977 млн).</li>
+        <li>Самый слабый день — <b>среда</b>: 3 659 млн.</li>
+        <li>Разница между лучшим и худшим днём — всего 9,1%: площадка работает без выходных,
+          и выраженной недельной сезонности нет.</li>
+        <li>Вывод: акции и смены лучше планировать на среду, чтобы подтянуть самый слабый день.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>Продажи · продавцы</span><span>6</span></div>
+</section>
+
+<section class="slide">
+  <h2>Выручка каждого продавца по дням недели
+    <small>Отчёт day_of_the_week_income, млн; строки отсортированы по общей выручке</small>
+  </h2>
+  <div class="row">
+    <div class="chart wide"><img src="img/seller_weekday_pivot.png" alt="Выручка продавцов по дням недели"></div>
+  </div>
+  <p style="font-size:17px;margin:10px 0 0">У каждого продавца выручка распределена по дням ровно
+    (например, Dirk Stringer: от 642 млн в среду до 759 млн в понедельник), поэтому разрыв между
+    продавцами объясняется не графиком работы, а размером сделок.</p>
+  <div class="footer"><span>Продажи · продавцы</span><span>7</span></div>
+</section>
+
+<section class="slide">
+  <h2>Покупатели по возрастным группам
+    <small>Отчёт age_groups: количество покупателей в базе по группам 16-25, 26-40, 40+</small>
+  </h2>
+  <div class="row">
+    <div class="chart"><img src="img/age_groups.png" alt="Покупатели по возрастным группам"></div>
+    <div class="notes">
+      <h3>Что видно</h3>
+      <ul>
+        <li>Больше всего покупателей старше 40 лет: <b>11 957</b> человек, <b>60,5%</b> базы.</li>
+        <li>Группа 26-40 — 5 139 человек (26,0%), группа 16-25 — 2 663 человека (13,5%).</li>
+        <li>Самому молодому покупателю 18 лет, самому старшему — 75.</li>
+        <li>Вывод: основная аудитория — люди старше 40; коммуникацию и ассортимент стоит
+          ориентировать на них, а молодёжь — отдельный канал роста.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>Продажи · покупатели</span><span>8</span></div>
+</section>
+
+<section class="slide">
+  <h2>Выручка и покупатели по месяцам
+    <small>Отчёт customers_by_month: выручка, млн, и число уникальных покупателей</small>
+  </h2>
+  <div class="row" style="gap:20px;flex:none">
+    <div class="chart"><img src="img/income_by_month.png" alt="Выручка по месяцам" style="max-height:330px"></div>
+    <div class="chart"><img src="img/customers_by_month.png" alt="Покупатели по месяцам" style="max-height:330px"></div>
+  </div>
+  <ul style="margin-top:10px">
+    <li>Пик выручки — <b>октябрь 1992</b>: 8 358 млн. Сентябрь (2 619 млн) неполный — данные начинаются с 21.09.</li>
+    <li>Дальше выручка снижается: ноябрь −3,9% к октябрю (8 031 млн), декабрь −4,0% к ноябрю (7 708 млн).</li>
+    <li>Число покупателей стабильно — 226–230 в месяц, значит падение выручки связано с размером покупок,
+      а не с оттоком клиентов. Стоит проверить ассортимент и цены в ноябре–декабре.</li>
+  </ul>
+  <div class="footer"><span>Продажи · покупатели</span><span>9</span></div>
+</section>
+
+<section class="slide">
+  <h2>Первая покупка — по акции
+    <small>Отчёт special_offer: покупатели, чья первая покупка — товар с нулевой ценой</small>
+  </h2>
+  <div class="row">
+    <div class="chart"><img src="img/special_offer_table.png" alt="Покупатели, начавшие с акционного товара"></div>
+    <div class="notes">
+      <h3>Что видно</h3>
+      <ul>
+        <li>Таких покупателей <b>15</b>, все первые покупки — 21–24 сентября 1992, в первые дни
+          данных.</li>
+        <li>Больше всего таких клиентов привёл <b>Michael O'Leary</b> — 6 из 15; ещё по 3 у
+          Abraham Bennet, Dirk Stringer и Marjorie Green.</li>
+        <li>Всего на акционные товары пришлось 7 840 сделок (7,8%), и все они у этих же 15 покупателей.</li>
+        <li>Вывод: акция привлекает мало новых клиентов; стоит проверить, приносят ли эти
+          покупатели выручку после акции.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>Продажи · покупатели</span><span>10</span></div>
+</section>
+
+<section class="slide">
+  <h2>Выводы и рекомендации</h2>
+  <ul>
+    <li><b>Выручка сосредоточена</b>: топ-3 продавца дают 40,7%, топ-10 — 76,5% из 26,7 млрд.
+      Бонус логично считать по выручке — по этому критерию лидирует Dirk Stringer (4 925 млн).</li>
+    <li><b>Средний чек</b> у 15 из 22 продавцов ниже среднего (267 165). Число сделок не равно вкладу:
+      у Abraham Bennet больше всех сделок (9 460), но лишь шестая выручка.</li>
+    <li><b>Дни недели</b> почти не влияют на выручку (разброс 9,1%); слабее всего среда — кандидат для акций.</li>
+    <li><b>Аудитория</b> — в основном 40+ (60,5% базы), при этом покупки совершили лишь 230 из 19 759 клиентов:
+      большая неактивная база — резерв для маркетинга.</li>
+    <li><b>Динамика</b>: после пика в октябре выручка снижается ~4% в месяц при стабильном числе покупателей.</li>
+    <li><b>Акции</b> привлекли только 15 новых покупателей — эффективность акций стоит пересмотреть.</li>
+  </ul>
+  <p style="margin-top:16px">Дашборд: <span class="link">http://localhost:8088/superset/dashboard/sales/</span>
+    · SQL-запросы — <span class="link">queries.sql</span> в репозитории
+    <span class="link">github.com/kicha3007-boop/bi-analyst-project-92</span></p>
+  <div class="footer"><span>Продажи · выводы</span><span>11</span></div>
+</section>
+
+<section class="slide">
+  <h2>Приложение: дашборд целиком
+    <small>Superset, дашборд «Продажи: продавцы и покупатели»</small>
+  </h2>
+  <div class="row">
+    <div class="chart"><img src="img/dashboard.png" alt="Дашборд" style="max-height:580px"></div>
+  </div>
+  <div class="footer"><span>Продажи · дашборд</span><span>12</span></div>
+</section>
+
+</body>
+</html>
